@@ -67,8 +67,6 @@ git clone https://github.com/sameeralam3127/ansible-server-health-dashboard.git
 cd ansible-server-health-dashboard
 ```
 
-````
-
 ### 2. Install requirements (if any)
 
 ```bash
@@ -131,50 +129,3 @@ Run and save reports to custom location:
 ```bash
 ansible-playbook -i inventory/hosts.ini playbooks/site.yml -e "report_output_dir=/home/user/monthly-reports"
 ```
-
-## Project Structure
-
-```
-ansible-server-performance-report/
-├── ansible.cfg
-├── inventory/
-│   └── hosts.ini
-├── playbooks/
-│   └── site.yml
-├── roles/
-│   └── performance_report/
-│       ├── defaults/
-│       ├── tasks/
-│       ├── templates/
-│       └── handlers/
-├── reports/                  # ← generated HTML reports go here
-├── .ansible-lint
-├── .pre-commit-config.yaml
-└── requirements.yml
-```
-
-## Customization Ideas
-
-- Change the HTML template → `roles/performance_report/templates/report.html.j2`
-- Add more facts or commands → create new task files in `tasks/`
-- Add email sending → use `community.general.mail` module
-- Add PDF generation → use `weasyprint` or `wkhtmltopdf` in a follow-up task
-- Add alerting → if something is red → send to Slack/Teams/Discord
-
-## Contributing
-
-Feel free to open issues or pull requests!
-
-Especially welcome:
-
-- Support for more distributions
-- Better looking report designs
-- Additional metrics (docker stats, systemd services status, etc.)
-- Alerting integrations
-
-## License
-
-MIT License
-
----
-````
