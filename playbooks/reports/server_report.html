@@ -1,43 +1,227 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Server Performance Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body { font-family: Arial; background:#0b1220; color:#e5e7eb }
-    .card { background:#111827; padding:20px; margin:20px; border-radius:10px }
-    h2 { color:#38bdf8 }
-  </style>
+<meta charset="UTF-8">
+<title>Server Performance Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root {
+  --bg: #0b1220;
+  --panel: #111827;
+  --border: #1f2937;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --accent: #38bdf8;
+  --good: #22c55e;
+  --warn: #f59e0b;
+  --bad: #ef4444;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+header {
+  padding: 20px 30px;
+  font-size: 22px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.panel h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: var(--accent);
+}
+
+.kpis {
+  display: flex;
+  gap: 12px;
+}
+
+.kpi {
+  flex: 1;
+  background: #020617;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.kpi .value {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.kpi .label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th, td {
+  padding: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.progress {
+  background: #020617;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress span {
+  display: block;
+  height: 8px;
+  background: var(--accent);
+}
+</style>
 </head>
+
 <body>
 
-<h1>📊 Server Performance Dashboard</h1>
+<header>📊 Server Performance Dashboard</header>
 
-<div class="card">
-<h2>snappy-nightingale</h2>
-<p><b>OS:</b> Ubuntu 24.04</p>
-<p><b>Arch:</b> aarch64</p>
+<section class="grid">
 
-<h3>Disk</h3>
-<pre>Filesystem      Size  Used Avail Use% Mounted on
-tmpfs            96M  1.2M   95M   2% /run
-efivarfs        256K   15K  242K   6% /sys/firmware/efi/efivars
-/dev/sda1       3.9G  2.0G  1.9G  53% /
-tmpfs           477M     0  477M   0% /dev/shm
-tmpfs           5.0M     0  5.0M   0% /run/lock
-/dev/sda16      891M   60M  769M   8% /boot
-/dev/sda15       98M  6.4M   92M   7% /boot/efi
-tmpfs            96M   12K   96M   1% /run/user/1000</pre>
-
-<h3>Users</h3>
-<pre>root, daemon, bin, sys, sync, games, man, lp, mail, news, uucp, proxy, www-data, backup, list, irc, _apt, nobody, systemd-network, systemd-timesync, dhcpcd, messagebus, syslog, systemd-resolve, uuidd, sshd, pollinate, tcpdump, landscape, fwupd-refresh, polkitd, ubuntu</pre>
-
-<h3>CPU (raw sar)</h3>
-<pre></pre>
-
-<h3>Memory (raw sar)</h3>
-<pre></pre>
+<!-- SYSTEM INFO -->
+<div class="panel">
+  <h3>snappy-nightingale</h3>
+  <p>OS: Ubuntu 24.04</p>
+  <p>Arch: aarch64</p>
 </div>
+
+<!-- KPI PANEL -->
+<div class="panel">
+  <h3>Overview</h3>
+  <div class="kpis">
+    <div class="kpi">
+      <div class="value">0.0%</div>
+      <div class="label">CPU Usage</div>
+    </div>
+    <div class="kpi">
+      <div class="value">27.1%</div>
+      <div class="label">Memory Usage</div>
+    </div>
+  </div>
+</div>
+
+<!-- CPU CHART -->
+<div class="panel">
+  <h3>CPU Usage</h3>
+  <canvas id="cpu_1"></canvas>
+</div>
+
+<!-- MEMORY CHART -->
+<div class="panel">
+  <h3>Memory Usage</h3>
+  <canvas id="mem_1"></canvas>
+</div>
+
+<!-- DISK TABLE -->
+<div class="panel" style="grid-column: span 2">
+<h3>Disk Usage</h3>
+<table>
+<tr>
+  <th>Mount</th><th>Size</th><th>Used</th><th>Use%</th>
+</tr>
+<tr>
+<td>/sys/firmware/efi/efivars</td>
+<td>256K</td>
+<td>15K</td>
+<td>
+  6%
+  <div class="progress">
+    <span style="width: 6%"></span>
+  </div>
+</td>
+</tr>
+<tr>
+<td>/</td>
+<td>3.9G</td>
+<td>2.0G</td>
+<td>
+  53%
+  <div class="progress">
+    <span style="width: 53%"></span>
+  </div>
+</td>
+</tr>
+<tr>
+<td>/boot</td>
+<td>891M</td>
+<td>60M</td>
+<td>
+  8%
+  <div class="progress">
+    <span style="width: 8%"></span>
+  </div>
+</td>
+</tr>
+<tr>
+<td>/boot/efi</td>
+<td>98M</td>
+<td>6.4M</td>
+<td>
+  7%
+  <div class="progress">
+    <span style="width: 7%"></span>
+  </div>
+</td>
+</tr>
+</table>
+</div>
+
+</section>
+
+<script>
+new Chart(document.getElementById('cpu_1'), {
+  type: 'line',
+  data: {
+    labels: ['Now'],
+    datasets: [{
+      label: 'CPU %',
+      data: [0.0],
+      borderColor: '#38bdf8',
+      tension: 0.4
+    }]
+  }
+});
+new Chart(document.getElementById('mem_1'), {
+  type: 'line',
+  data: {
+    labels: ['Now'],
+    datasets: [{
+      label: 'Memory %',
+      data: [27.1],
+      borderColor: '#22c55e',
+      tension: 0.4
+    }]
+  }
+});
+</script>
 
 </body>
 </html>

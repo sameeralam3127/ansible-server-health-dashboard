@@ -1,9 +1,9 @@
 ---
-- name: Collect memory usage (sar)
+- name: Collect memory usage
   shell: |
-    sar -r -f /var/log/sysstat/sa$(date +%d) | tail -n +4
-  register: mem_sar
+    free -m | awk '/Mem:/ { printf "%.2f", ($3/$2)*100 }'
+  register: mem_usage
   changed_when: false
 
 - set_fact:
-    memory_usage: "{{ mem_sar.stdout_lines }}"
+    memory_avg_usage: "{{ mem_usage.stdout | float }}"

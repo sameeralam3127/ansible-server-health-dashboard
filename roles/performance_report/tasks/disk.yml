@@ -1,8 +1,14 @@
 ---
-- name: Collect disk usage
-  command: df -h
-  register: disk_usage
+- name: Collect disk usage (structured)
+  shell: |
+    df -h --output=source,size,used,avail,pcent,target -x tmpfs -x devtmpfs | tail -n +2
+  register: disk_raw
   changed_when: false
 
 - set_fact:
-    disk: "{{ disk_usage.stdout_lines }}"
+    disk_table: >-
+      {{
+        disk_raw.stdout_lines
+        | map('split')
+        | list
+      }}

@@ -1,9 +1,9 @@
 ---
-- name: Collect CPU usage (sar)
+- name: Collect CPU usage (last 24h average)
   shell: |
-    sar -u -f /var/log/sysstat/sa$(date +%d) | tail -n +4
-  register: cpu_sar
+    sar -u 1 1 | awk '/Average/ {print 100 - $8}'
+  register: cpu_avg
   changed_when: false
 
 - set_fact:
-    cpu_usage: "{{ cpu_sar.stdout_lines }}"
+    cpu_avg_usage: "{{ cpu_avg.stdout | float }}"

@@ -1,37 +1,198 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Server Performance Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body { font-family: Arial; background:#0b1220; color:#e5e7eb }
-    .card { background:#111827; padding:20px; margin:20px; border-radius:10px }
-    h2 { color:#38bdf8 }
-  </style>
+<meta charset="UTF-8">
+<title>Server Performance Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root {
+  --bg: #0b1220;
+  --panel: #111827;
+  --border: #1f2937;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --accent: #38bdf8;
+  --good: #22c55e;
+  --warn: #f59e0b;
+  --bad: #ef4444;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+header {
+  padding: 20px 30px;
+  font-size: 22px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.panel h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: var(--accent);
+}
+
+.kpis {
+  display: flex;
+  gap: 12px;
+}
+
+.kpi {
+  flex: 1;
+  background: #020617;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.kpi .value {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.kpi .label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th, td {
+  padding: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.progress {
+  background: #020617;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress span {
+  display: block;
+  height: 8px;
+  background: var(--accent);
+}
+</style>
 </head>
+
 <body>
 
-<h1>📊 Server Performance Dashboard</h1>
+<header>📊 Server Performance Dashboard</header>
 
 {% for host in ansible_play_hosts %}
-<div class="card">
-<h2>{{ hostvars[host].os_details.hostname }}</h2>
-<p><b>OS:</b> {{ hostvars[host].os_details.os }}</p>
-<p><b>Arch:</b> {{ hostvars[host].os_details.arch }}</p>
+<section class="grid">
 
-<h3>Disk</h3>
-<pre>{{ hostvars[host].disk | join('\n') }}</pre>
-
-<h3>Users</h3>
-<pre>{{ hostvars[host].user_list | join(', ') }}</pre>
-
-<h3>CPU (raw sar)</h3>
-<pre>{{ hostvars[host].cpu_usage | join('\n') }}</pre>
-
-<h3>Memory (raw sar)</h3>
-<pre>{{ hostvars[host].memory_usage | join('\n') }}</pre>
+<!-- SYSTEM INFO -->
+<div class="panel">
+  <h3>{{ hostvars[host].ansible_facts['hostname'] }}</h3>
+  <p>OS: {{ hostvars[host].ansible_facts['distribution'] }} {{ hostvars[host].ansible_facts['distribution_version'] }}</p>
+  <p>Arch: {{ hostvars[host].ansible_facts['architecture'] }}</p>
 </div>
-{% endfor %}
 
+<!-- KPI PANEL -->
+<div class="panel">
+  <h3>Overview</h3>
+  <div class="kpis">
+    <div class="kpi">
+      <div class="value">{{ hostvars[host].cpu_avg_usage }}%</div>
+      <div class="label">CPU Usage</div>
+    </div>
+    <div class="kpi">
+      <div class="value">{{ hostvars[host].memory_avg_usage }}%</div>
+      <div class="label">Memory Usage</div>
+    </div>
+  </div>
+</div>
+
+<!-- CPU CHART -->
+<div class="panel">
+  <h3>CPU Usage</h3>
+  <canvas id="cpu_{{ loop.index }}"></canvas>
+</div>
+
+<!-- MEMORY CHART -->
+<div class="panel">
+  <h3>Memory Usage</h3>
+  <canvas id="mem_{{ loop.index }}"></canvas>
+</div>
+
+<!-- DISK TABLE -->
+<div class="panel" style="grid-column: span 2">
+<h3>Disk Usage</h3>
+<table>
+<tr>
+  <th>Mount</th><th>Size</th><th>Used</th><th>Use%</th>
+</tr>
+{% for d in hostvars[host].disk_table %}
+<tr>
+<td>{{ d[5] }}</td>
+<td>{{ d[1] }}</td>
+<td>{{ d[2] }}</td>
+<td>
+  {{ d[4] }}
+  <div class="progress">
+    <span style="width: {{ d[4] | replace('%','') }}%"></span>
+  </div>
+</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+</section>
+
+<script>
+new Chart(document.getElementById('cpu_{{ loop.index }}'), {
+  type: 'line',
+  data: {
+    labels: ['Now'],
+    datasets: [{
+      label: 'CPU %',
+      data: [{{ hostvars[host].cpu_avg_usage }}],
+      borderColor: '#38bdf8',
+      tension: 0.4
+    }]
+  }
+});
+new Chart(document.getElementById('mem_{{ loop.index }}'), {
+  type: 'line',
+  data: {
+    labels: ['Now'],
+    datasets: [{
+      label: 'Memory %',
+      data: [{{ hostvars[host].memory_avg_usage }}],
+      borderColor: '#22c55e',
+      tension: 0.4
+    }]
+  }
+});
+</script>
+
+{% endfor %}
 </body>
 </html>
