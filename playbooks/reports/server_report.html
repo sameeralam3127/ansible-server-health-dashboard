@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Server Performance Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial; background:#0b1220; color:#e5e7eb }
+    .card { background:#111827; padding:20px; margin:20px; border-radius:10px }
+    h2 { color:#38bdf8 }
+  </style>
+</head>
+<body>
+
+<h1>📊 Server Performance Dashboard</h1>
+
+<div class="card">
+<h2>snappy-nightingale</h2>
+<p><b>OS:</b> Ubuntu 24.04</p>
+<p><b>Arch:</b> aarch64</p>
+
+<h3>Disk</h3>
+<pre>Filesystem      Size  Used Avail Use% Mounted on
+tmpfs            96M  1.2M   95M   2% /run
+efivarfs        256K   15K  242K   6% /sys/firmware/efi/efivars
+/dev/sda1       3.9G  2.0G  1.9G  53% /
+tmpfs           477M     0  477M   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+/dev/sda16      891M   60M  769M   8% /boot
+/dev/sda15       98M  6.4M   92M   7% /boot/efi
+tmpfs            96M   12K   96M   1% /run/user/1000</pre>
+
+<h3>Users</h3>
+<pre>root, daemon, bin, sys, sync, games, man, lp, mail, news, uucp, proxy, www-data, backup, list, irc, _apt, nobody, systemd-network, systemd-timesync, dhcpcd, messagebus, syslog, systemd-resolve, uuidd, sshd, pollinate, tcpdump, landscape, fwupd-refresh, polkitd, ubuntu</pre>
+
+<h3>CPU (raw sar)</h3>
+<pre></pre>
+
+<h3>Memory (raw sar)</h3>
+<pre></pre>
+</div>
+
+</body>
+</html>

@@ -6,8 +6,18 @@
 - import_tasks: disk.yml
 - import_tasks: users.yml
 
+- name: Ensure reports directory exists on controller
+  delegate_to: localhost
+  become: false
+  run_once: true
+  file:
+    path: "{{ report_output | dirname }}"
+    state: directory
+    mode: "0755"
+
 - name: Generate HTML report (run once)
   delegate_to: localhost
+  become: false
   run_once: true
   template:
     src: report.html.j2
