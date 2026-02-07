@@ -1,0 +1,8 @@
+---
+- name: Server Performance Report
+  hosts: servers
+  become: true
+  gather_facts: true
+
+  roles:
+    - performance_report

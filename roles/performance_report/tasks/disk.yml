@@ -1,0 +1,8 @@
+---
+- name: Collect disk usage
+  command: df -h
+  register: disk_usage
+  changed_when: false
+
+- set_fact:
+    disk: "{{ disk_usage.stdout_lines }}"

@@ -1,0 +1,12 @@
+---
+- name: Install sysstat
+  package:
+    name: sysstat
+    state: present
+
+- name: Enable sysstat collection
+  lineinfile:
+    path: /etc/default/sysstat
+    regexp: "^ENABLED="
+    line: 'ENABLED="true"'
+  notify: restart sysstat

@@ -1,0 +1,8 @@
+---
+- name: Set OS & architecture facts
+  set_fact:
+    os_details:
+      hostname: "{{ ansible_hostname }}"
+      os: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
+      arch: "{{ ansible_architecture }}"
+      kernel: "{{ ansible_kernel }}"

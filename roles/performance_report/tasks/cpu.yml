@@ -1,0 +1,9 @@
+---
+- name: Collect CPU usage (sar)
+  shell: |
+    sar -u -f /var/log/sysstat/sa$(date +%d) | tail -n +4
+  register: cpu_sar
+  changed_when: false
+
+- set_fact:
+    cpu_usage: "{{ cpu_sar.stdout_lines }}"

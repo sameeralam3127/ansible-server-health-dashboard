@@ -1,0 +1,2 @@
+report_output: "./reports/server_report.html"
+history_days: 30

@@ -1,0 +1,8 @@
+---
+- name: Get user list
+  command: cut -d: -f1 /etc/passwd
+  register: users
+  changed_when: false
+
+- set_fact:
+    user_list: "{{ users.stdout_lines }}"

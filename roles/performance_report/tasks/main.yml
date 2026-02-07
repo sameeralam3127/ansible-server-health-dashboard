@@ -1,0 +1,14 @@
+---
+- import_tasks: sysstat.yml
+- import_tasks: collect_facts.yml
+- import_tasks: cpu.yml
+- import_tasks: memory.yml
+- import_tasks: disk.yml
+- import_tasks: users.yml
+
+- name: Generate HTML report (run once)
+  delegate_to: localhost
+  run_once: true
+  template:
+    src: report.html.j2
+    dest: "{{ report_output }}"
