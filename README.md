@@ -1,6 +1,7 @@
 # Ansible Server Health Dashboard
 
 A role-based Ansible project that collects Linux server metrics (CPU, RAM, Disk usage) and generates a centralized HTML dashboard report.
+<img width="1480" height="401" alt="Screenshot 2026-02-15 at 11 44 39 PM" src="https://github.com/user-attachments/assets/69166efb-f17a-4ec2-85b3-9a4bde67de85" />
 
 ## Features
 
