@@ -1,0 +1,15 @@
+---
+- name: Ensure reports directory exists
+  ansible.builtin.file:
+    path: "{{ playbook_dir }}/reports"
+    state: directory
+    mode: "0755"
+  delegate_to: localhost
+  run_once: true
+
+- name: Generate consolidated HTML report
+  ansible.builtin.template:
+    src: report.html.j2
+    dest: "{{ playbook_dir }}/reports/system_report.html"
+  delegate_to: localhost
+  run_once: true

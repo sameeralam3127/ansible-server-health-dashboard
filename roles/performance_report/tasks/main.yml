@@ -1,24 +1,27 @@
 ---
-- import_tasks: sysstat.yml
-- import_tasks: collect_facts.yml
-- import_tasks: cpu.yml
-- import_tasks: memory.yml
-- import_tasks: disk.yml
-- import_tasks: users.yml
+- name: Collect system metrics
+  ansible.builtin.set_fact:
+    monitoring_result:
+      hostname: "{{ inventory_hostname }}"
+      ip: "{{ ansible_default_ipv4.address }}"
+      os: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
+      cpu_cores: "{{ ansible_processor_vcpus }}"
+      memory_total_mb: "{{ ansible_memtotal_mb }}"
+      memory_used_mb: "{{ ansible_memtotal_mb - ansible_memfree_mb }}"
+      disk_total_gb: "{{ (ansible_mounts | selectattr('mount','equalto','/') | map(attribute='size_total') | first / 1073741824) | round(2) }}"
+      disk_free_gb: "{{ (ansible_mounts | selectattr('mount','equalto','/') | map(attribute='size_available') | first / 1073741824) | round(2) }}"
 
-- name: Ensure reports directory exists on controller
-  delegate_to: localhost
-  become: false
-  run_once: true
-  file:
-    path: "{{ report_output | dirname }}"
+- name: Ensure reports directory exists (local)
+  ansible.builtin.file:
+    path: "{{ playbook_dir }}/reports"
     state: directory
     mode: "0755"
-
-- name: Generate HTML report (run once)
   delegate_to: localhost
-  become: false
   run_once: true
-  template:
+
+- name: Generate consolidated HTML report
+  ansible.builtin.template:
     src: report.html.j2
-    dest: "{{ report_output }}"
+    dest: "{{ report_output_path }}"
+  delegate_to: localhost
+  run_once: true

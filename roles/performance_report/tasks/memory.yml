@@ -1,9 +1,0 @@
----
-- name: Collect memory usage
-  shell: |
-    free -m | awk '/Mem:/ { printf "%.2f", ($3/$2)*100 }'
-  register: mem_usage
-  changed_when: false
-
-- set_fact:
-    memory_avg_usage: "{{ mem_usage.stdout | float }}"

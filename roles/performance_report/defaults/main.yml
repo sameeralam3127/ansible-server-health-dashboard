@@ -1,2 +1,2 @@
-report_output: "./reports/server_report.html"
-history_days: 30
+---
+report_output_path: "{{ playbook_dir }}/reports/system_report.html"

@@ -1,9 +1,0 @@
----
-- name: Collect CPU usage (last 24h average)
-  shell: |
-    sar -u 1 1 | awk '/Average/ {print 100 - $8}'
-  register: cpu_avg
-  changed_when: false
-
-- set_fact:
-    cpu_avg_usage: "{{ cpu_avg.stdout | float }}"
