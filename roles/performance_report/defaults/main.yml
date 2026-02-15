@@ -1,2 +1,2 @@
 ---
-report_output_path: "{{ playbook_dir }}/reports/system_report.html"
+performance_report_output_path: "{{ playbook_dir }}/reports/system_report.html"

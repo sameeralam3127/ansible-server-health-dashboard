@@ -3,3 +3,13 @@ repos:
     rev: v26.1.1
     hooks:
       - id: ansible-lint
+        files: \.(yml|yaml)$
+        additional_dependencies:
+          - ansible-core>=2.16
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
